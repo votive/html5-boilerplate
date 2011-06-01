@@ -9,6 +9,12 @@
 			<pathelement location="${basedir}/build/tools/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
+	
+	<!-- Load in JSDoc builder jar -->
+    <!-- the .jar file is located in the tools directory -->
+	<taskdef name="jsdoctoolkit" 
+			 classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit" 
+			 classpath="${basedir}/build/tools/jsdoc-toolkit-ant-task-1.1.2.jar;${basedir}/build/tools/jsdoc-toolkit/java/classes/js.jar"/>
 
     <!-- load shell environment -->
     <property environment="ENV" />
@@ -164,6 +170,14 @@
         </else>
     </if>
     </target>
+	
+	
+	<target name="docs">
+	
+		<antcall target="-generatedocs"/>
+	
+	</target>
+ 
 
     <target name="clean" depends="-clean"/>
     
@@ -330,7 +344,8 @@
                      -htmlclean,
                      -imagespng,
                      -imagesjpg,
-                     -copy"/>
+                     -copy"
+					 -generatedocs"/>
 
     <!-- Target: minify -->
     <target name="-minify.dev"
@@ -638,6 +653,7 @@
             <fileset dir="./${dir.intermediate}/${dir.css}/" includes="style-concat.css"/>
             <arg line="-jar"/>
             <arg path="./${dir.build.tools}/${tool.yuicompressor}"/>
+			<arg line="--charset utf-8"/>
             <srcfile/>
             <arg line="-o"/>
             <mapper type="merge" to="${basedir}/${dir.intermediate}/${dir.css}/style-concat.min.css"/>
@@ -779,5 +795,11 @@
         </copy> 
     </target>
 
+	
+	<target name="-generatedocs">
+	
+		<jsdoctoolkit jsdochome="${basedir}/build/tools/jsdoc-toolkit/" template="codeview 1.2" outputdir="../${dir.documentation}" inputdir="${basedir}/js/mylibs/" />
+	
+	</target>
     
 </project>
